@@ -156,7 +156,7 @@
         <!-- Gold accent bar -->
         <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--gold),var(--gold2));padding:.75rem 1.5rem">
           <div id="featured-name" style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--navy)">Barr. Love Chinyere Ebunoluwa</div>
-          <div id="featured-role" style="font-size:.78rem;color:rgba(13,27,62,.7);font-weight:600">Senior Associate</div>
+          <div id="featured-role" style="font-size:.78rem;color:rgba(13,27,62,.7);font-weight:600">Founder &amp; Managing Partner</div>
         </div>
       </div>
     </div>
@@ -201,9 +201,9 @@ document.addEventListener('DOMContentLoaded', function() {
   fetch('/api/public/team')
     .then(function(r) { return r.ok ? r.json() : []; })
     .then(function(team) {
-      if (!team || team.length < 2) return;
-      // Show the Senior Associate (index 1, sort_order 1)
-      var member = team[1] || team[0];
+      if (!team || team.length === 0) return;
+      // Show first member who has a photo, fallback to index 1, then index 0
+      var member = team.find(function(m) { return m.photo; }) || team[0];
       var photoWrap = document.getElementById('featured-team-photo');
       if (member.photo) {
         photoWrap.innerHTML = '<img src="/' + member.photo + '?v=' + Date.now()
