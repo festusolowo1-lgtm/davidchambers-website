@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portal | DAVID CHAMBERS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <!-- PWA -->
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#0d1b3e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DC Legal">
+  <link rel="apple-touch-icon" href="../images/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/icon-96.png">
+  <style>
+    body{background:#f1f4f9}
+    #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d1b3e,#1a2f5e);padding:2rem}
+    .lcard{background:#fff;border-radius:20px;padding:3rem;max-width:430px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.3)}
+    .lemblem{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--navy);margin:0 auto 1.2rem}
+    .lerr{background:#fee2e2;color:#b71c2a;border-radius:8px;padding:0.65rem 1rem;font-size:0.85rem;margin-bottom:1rem;display:none;text-align:center}
+    .lhint{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:0.8rem 1rem;margin-top:1.2rem;font-size:0.78rem;color:var(--slate);text-align:center}
+    #dashboard{display:none}
+    .topbar{background:var(--navy);padding:0.85rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 0 rgba(201,168,76,0.2)}
+    .tbrand{display:flex;align-items:center;gap:0.75rem}
+    .temblem{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:700;color:var(--navy)}
+    .tfirm{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:#fff}
+    .twelcome{font-size:0.78rem;color:rgba(255,255,255,0.5)}
+    .tbtn{padding:0.4rem 1rem;border-radius:50px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75);font-size:0.8rem;font-family:'DM Sans',sans-serif;cursor:pointer}
+    .tlogout{background:rgba(183,28,42,0.15);color:#ff8a80;border-color:rgba(183,28,42,0.25)}
+    .tlogout:hover{background:#b71c2a;color:#fff}
+    .tabs{background:#fff;border-bottom:1px solid rgba(13,27,62,0.08);padding:0 2rem;display:flex;overflow-x:auto}
+    .tab{padding:1rem 1.2rem;font-size:0.86rem;font-weight:500;color:var(--slate);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:'DM Sans',sans-serif}
+    .tab.active{color:var(--navy);border-bottom-color:var(--gold);font-weight:600}
+    .dbody{max-width:1200px;margin:2rem auto;padding:0 2rem}
+    .panel{display:none}.panel.active{display:block}
+    .dcard{background:#fff;border-radius:12px;padding:1.8rem;box-shadow:0 3px 16px rgba(13,27,62,0.07);margin-bottom:1.5rem;border:1px solid rgba(13,27,62,0.05)}
+    .ctitle{font-size:1rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:0.6rem;padding-bottom:0.9rem;border-bottom:1px solid rgba(13,27,62,0.06);margin-bottom:1.2rem}
+    .ctitle i{color:var(--gold)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+    .scard{background:#fff;border-radius:10px;padding:1.2rem;box-shadow:0 3px 16px rgba(13,27,62,0.07);border-left:4px solid var(--gold);display:flex;align-items:center;gap:1rem}
+    .sicon{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.1rem;flex-shrink:0}
+    .sval{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--navy);line-height:1}
+    .slbl{font-size:0.75rem;color:var(--slate);margin-top:0.2rem}
+    /* ── PROGRESS TREE ── */
+    .progress-header{margin-bottom:1.5rem}
+    .progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem}
+    .progress-label span{font-size:0.82rem;font-weight:600;color:var(--navy)}
+    .progress-label .pct{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--gold2)}
+    .progress-bar-wrap{height:8px;background:rgba(13,27,62,0.08);border-radius:50px;overflow:hidden}
+    .progress-bar-fill{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--green),#2d9e6a);transition:width 1s ease}
+
+    .tl{position:relative;padding-left:2.5rem}
+    .tl::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;background:rgba(13,27,62,0.08)}
+    .tli{position:relative;margin-bottom:0;padding:1rem 0 1rem 0.5rem}
+    .tli:not(:last-child)::after{content:'';position:absolute;left:-2.5rem;top:2rem;bottom:0;width:2px;background:inherit}
+    .tli.tli-done::after{background:var(--green)}
+    .tli.tli-current::after{background:linear-gradient(to bottom,var(--green) 50%,rgba(13,27,62,0.08) 50%)}
+
+    .tldot{position:absolute;left:-2.5rem;top:1rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;z-index:2;border:3px solid #fff}
+    .tldot.done{background:var(--green);color:#fff;box-shadow:0 0 0 3px rgba(26,122,74,0.2)}
+    .tldot.current{background:var(--gold);color:var(--navy);box-shadow:0 0 0 3px rgba(201,168,76,0.25);animation:pulse 2s infinite}
+    .tldot.pending{background:#f1f4f9;color:var(--slate);box-shadow:0 0 0 3px rgba(13,27,62,0.06)}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(201,168,76,0.25)}50%{box-shadow:0 0 0 6px rgba(201,168,76,0.1)}}
+
+    .tl-step-card{background:#fff;border-radius:10px;padding:1rem 1.2rem;border:1px solid rgba(13,27,62,0.06);transition:all 0.2s}
+    .tl-step-card.done{background:rgba(26,122,74,0.03);border-color:rgba(26,122,74,0.12)}
+    .tl-step-card.current{background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.25);box-shadow:0 2px 12px rgba(201,168,76,0.1)}
+    .tl-step-card.pending{background:#f9f9fb;border-color:rgba(13,27,62,0.04)}
+    .tldate{font-size:0.72rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.3rem}
+    .tldate.done{color:var(--green)}
+    .tldate.current{color:var(--gold2)}
+    .tldate.pending{color:var(--slate)}
+    .tltitle{font-weight:600;font-size:0.92rem;margin-bottom:0.25rem;display:flex;align-items:center;gap:0.5rem}
+    .tltitle.done{color:#1a5c38}
+    .tltitle.current{color:var(--navy)}
+    .tltitle.pending{color:var(--slate)}
+    .tl-badge{font-size:0.68rem;font-weight:700;padding:0.15rem 0.6rem;border-radius:50px}
+    .tl-badge.done{background:rgba(26,122,74,0.1);color:var(--green)}
+    .tl-badge.current{background:rgba(201,168,76,0.15);color:var(--gold2)}
+    .tl-badge.pending{background:rgba(13,27,62,0.07);color:var(--slate)}
+    .tldesc{font-size:0.84rem;color:var(--slate);line-height:1.6}
+    .doclist{display:flex;flex-direction:column;gap:0.75rem}
+    .docitem{display:flex;align-items:center;gap:1rem;padding:0.9rem 1.1rem;background:var(--ivory);border-radius:8px;border:1px solid var(--ivory2)}
+    .msglist{display:flex;flex-direction:column;gap:1rem}
+    .msgitem{padding:1rem;border-radius:8px;border:1px solid rgba(13,27,62,0.06)}
+    .msgitem.unread{background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.2)}
+    .compose{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(13,27,62,0.06)}
+    .compose textarea{width:100%;padding:0.8rem 1rem;border:1.5px solid rgba(13,27,62,0.12);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.9rem;resize:vertical;min-height:90px;outline:none}
+    .compose textarea:focus{border-color:var(--gold)}
+    .invtable{width:100%;border-collapse:collapse;font-size:0.85rem}
+    .invtable th{text-align:left;padding:0.7rem 0.9rem;background:var(--ivory);color:var(--navy);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em}
+    .invtable td{padding:0.85rem 0.9rem;border-bottom:1px solid rgba(13,27,62,0.05);color:var(--slate)}
+    .badge{display:inline-block;padding:0.2rem 0.7rem;border-radius:50px;font-size:0.72rem;font-weight:600}
+    .b-paid{background:rgba(26,122,74,0.1);color:var(--green)}
+    .b-due{background:rgba(183,28,42,0.1);color:#b71c2a}
+    .b-pend{background:rgba(201,168,76,0.12);color:var(--gold2)}
+    .cmeta{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2rem}
+    .cmeta-item span{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);display:block;margin-bottom:0.2rem}
+    .cmeta-item strong{font-size:0.9rem;color:var(--navy)}
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.cmeta{grid-template-columns:1fr 1fr}.dbody{padding:0 1rem}}
+  </style>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[PWA] Service worker registered:', reg.scope))
+          .catch(err => console.warn('[PWA] Service worker registration failed:', err));
+      });
+    }
+  </script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="lcard">
+    <div class="lemblem">DC</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--navy);text-align:center;margin-bottom:0.3rem">Client Portal</h2>
+    <p style="font-size:0.85rem;color:var(--slate);text-align:center;margin-bottom:1.8rem">Secure access to your legal matters</p>
+    <div class="lerr" id="lerr"></div>
+    <div class="f-group"><label style="display:block;font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:0.45rem">Email Address</label>
+      <input type="email" id="l-email" style="width:100%;padding:0.85rem 1rem;border:1.5px solid rgba(13,27,62,0.12);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none" placeholder="your@email.com">
+    </div>
+    <div class="f-group" style="margin-bottom:1.5rem"><label style="display:block;font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:0.45rem">Password</label>
+      <input type="password" id="l-pass" style="width:100%;padding:0.85rem 1rem;border:1.5px solid rgba(13,27,62,0.12);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.95rem;outline:none" placeholder="••••••••">
+    </div>
+    <button id="l-btn" onclick="doLogin()" style="width:100%;padding:0.95rem;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem">
+      <i class="fas fa-sign-in-alt"></i> Secure Login
+    </button>
+    <div class="lhint"><i class="fas fa-info-circle" style="color:var(--gold)"></i> Login credentials are in your engagement letter.<br>Need access? Call <strong>08037098327</strong></div>
+    <div style="margin-top:1rem;padding:0.9rem 1rem;background:#f0f8f4;border:1px solid rgba(26,122,74,0.2);border-radius:8px;text-align:center">
+      <p style="font-size:0.78rem;color:#1a7a4a;font-weight:600;margin-bottom:0.5rem"><i class="fas fa-book-open"></i> New here? Read the quick guide first</p>
+      <a href="/guides/Client_Portal_Guide.pdf" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 1.1rem;background:linear-gradient(135deg,#1a7a4a,#2d9e6a);color:#fff;border-radius:50px;font-size:0.78rem;font-weight:600;text-decoration:none;margin-right:0.3rem">
+        <i class="fas fa-file-pdf"></i> PDF Guide
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="tbrand">
+      <div class="temblem">DC</div>
+      <div><div class="tfirm">DAVID CHAMBERS</div><div class="twelcome" id="twelcome">Client Portal</div></div>
+    </div>
+    <div style="display:flex;gap:0.5rem;align-items:center">
+      <span style="color:rgba(255,255,255,0.4);font-size:0.78rem" id="tref"></span>
+      <button class="tbtn tlogout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview',this)"><i class="fas fa-th-large"></i> Overview</button>
+    <button class="tab" onclick="showTab('case',this)"><i class="fas fa-gavel"></i> My Case</button>
+    <button class="tab" onclick="showTab('docs',this)"><i class="fas fa-folder"></i> Documents</button>
+    <button class="tab" id="tab-msg-btn" onclick="showTab('msgs',this)"><i class="fas fa-comments"></i> Messages</button>
+    <button class="tab" onclick="showTab('invoices',this)"><i class="fas fa-file-invoice-dollar"></i> Invoices</button>
+  </div>
+  <div class="dbody">
+    <div id="panel-overview" class="panel active">
+      <div class="stats" id="stats"></div>
+    <div id="mini-progress"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+        <div class="dcard"><div class="ctitle"><i class="fas fa-bell"></i> Recent Activity</div><div id="activity"></div></div>
+        <div class="dcard"><div class="ctitle"><i class="fas fa-calendar-alt"></i> Upcoming Dates</div><div id="upcoming"></div></div>
+      </div>
+    </div>
+    <div id="panel-case" class="panel">
+      <div class="dcard">
+        <div class="ctitle"><i class="fas fa-gavel"></i> Case Details</div>
+        <div class="cmeta" id="cmeta"></div>
+        <h4 style="font-size:0.95rem;color:var(--navy);margin-bottom:1.2rem">Case Progress</h4>
+        <div id="timeline-progress"></div>
+        <div class="tl" id="timeline"></div>
+      </div>
+    </div>
+    <div id="panel-docs" class="panel">
+      <div class="dcard">
+        <div class="ctitle"><i class="fas fa-folder-open"></i> Case Documents</div>
+        <p style="font-size:0.85rem;color:var(--slate);margin-bottom:1rem" id="doc-count"></p>
+        <div class="doclist" id="doclist"></div>
+      </div>
+    </div>
+    <div id="panel-msgs" class="panel">
+      <div class="dcard">
+        <div class="ctitle"><i class="fas fa-comments"></i> Secure Messages</div>
+        <div class="msglist" id="msglist"></div>
+        <div class="compose">
+          <h4 style="font-size:0.88rem;color:var(--navy);margin-bottom:0.7rem"><i class="fas fa-pen"></i> Send Message to Your Legal Team</h4>
+          <textarea id="compose-txt" placeholder="Type your message… Protected by attorney-client privilege."></textarea>
+          <button class="btn btn-navy" style="margin-top:0.8rem" onclick="sendMsg()"><i class="fas fa-paper-plane"></i> Send Secure Message</button>
+        </div>
+      </div>
+    </div>
+    <div id="panel-invoices" class="panel">
+      <div class="dcard">
+        <div class="ctitle"><i class="fas fa-file-invoice-dollar"></i> Invoices &amp; Payments</div>
+        <table class="invtable"><thead><tr><th>Invoice #</th><th>Description</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody id="invbody"></tbody></table>
+        <div id="bank-info" style="margin-top:1.2rem;padding:1rem;background:var(--ivory);border-radius:8px;font-size:0.82rem;color:var(--slate)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="portal-toast"></div>
+
+<script>
+var TOKEN = sessionStorage.getItem('dc_token') || '';
+var UNAME = sessionStorage.getItem('dc_name')  || '';
+
+function pToast(msg) {
+  var t=document.getElementById('portal-toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+async function doLogin() {
+  var email=document.getElementById('l-email').value.trim();
+  var pass=document.getElementById('l-pass').value;
+  var err=document.getElementById('lerr');
+  var btn=document.getElementById('l-btn');
+  if(!email||!pass){err.textContent='Please enter email and password.';err.style.display='block';return;}
+  btn.innerHTML='<span class="spinner"></span> Logging in…'; btn.disabled=true;
+  try {
+    var r=await fetch('/api/client/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    if(!r.ok){var d=await r.json();throw new Error(d.detail||'Login failed');}
+    var d=await r.json();
+    TOKEN=d.token; UNAME=d.name;
+    sessionStorage.setItem('dc_token',d.token);
+    sessionStorage.setItem('dc_name',d.name);
+    err.style.display='none';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    document.getElementById('twelcome').textContent='Welcome, '+d.name;
+    loadDash();
+  } catch(e){err.textContent=e.message;err.style.display='block';}
+  finally{btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Secure Login';btn.disabled=false;}
+}
+
+function doLogout() {
+  fetch('/api/client/logout?token='+TOKEN,{method:'POST'}).catch(()=>{});
+  sessionStorage.clear(); TOKEN='';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('l-pass').value='';
+}
+
+async function loadDash() {
+  try {
+    var r=await fetch('/api/client/dashboard?token='+TOKEN);
+    var data=await r.json();
+    if(!data.case){document.getElementById('stats').innerHTML='<div class="dcard" style="grid-column:1/-1;text-align:center;padding:2rem"><p style="color:var(--slate)">No case on file yet. Contact us on <strong>08037098327</strong>.</p></div>';return;}
+    var c=data.case,tl=data.timeline,docs=data.documents,msgs=data.messages,invs=data.invoices,bank=data.bank,unread=data.unread;
+    document.getElementById('tref').textContent='Case: '+c.case_ref;
+    // STATS
+    var mBtn=document.getElementById('tab-msg-btn');
+    mBtn.innerHTML='<i class="fas fa-comments"></i> Messages'+(unread>0?` <span style="background:var(--gold);color:var(--navy);border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;margin-left:4px">${unread}</span>`:'');
+    var done_ct  = tl.filter(t=>t.status==='done').length;
+    var total_ct = tl.length;
+    var pct_done = total_ct > 0 ? Math.round((done_ct/total_ct)*100) : 0;
+    var cur_step = tl.find(t=>t.status==='current');
+
+    document.getElementById('stats').innerHTML=
+      `<div class="scard"><div class="sicon"><i class="fas fa-gavel"></i></div><div><div class="sval">${c.status}</div><div class="slbl">Case Status</div></div></div>`+
+      `<div class="scard"><div class="sicon"><i class="fas fa-tasks"></i></div><div><div class="sval">${pct_done}%</div><div class="slbl">Progress</div></div></div>`+
+      `<div class="scard"><div class="sicon"><i class="fas fa-envelope"></i></div><div><div class="sval">${unread}</div><div class="slbl">Unread Messages</div></div></div>`+
+      `<div class="scard"><div class="sicon"><i class="fas fa-calendar"></i></div><div><div class="sval">${c.next_date||'TBD'}</div><div class="slbl">Next Date</div></div></div>`;
+
+    // Mini progress bar under stats
+    var miniBar = document.getElementById('mini-progress');
+    if (miniBar) {
+      miniBar.innerHTML =
+        `<div style="margin-bottom:1.5rem;background:#fff;border-radius:10px;padding:1.2rem 1.5rem;box-shadow:0 3px 16px rgba(13,27,62,0.07);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem">
+            <span style="font-size:0.85rem;font-weight:600;color:var(--navy)"><i class="fas fa-balance-scale" style="color:var(--gold);margin-right:0.4rem"></i> ${c.case_type} — ${c.case_ref}</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--gold2)">${pct_done}%</span>
+          </div>
+          <div style="height:10px;background:rgba(13,27,62,0.07);border-radius:50px;overflow:hidden;margin-bottom:0.7rem">
+            <div style="height:100%;width:${pct_done}%;border-radius:50px;background:linear-gradient(90deg,#1a7a4a,#2d9e6a);transition:width 1.2s ease"></div>
+          </div>
+          <div style="display:flex;gap:1.5rem;font-size:0.78rem">
+            <span style="color:var(--green);font-weight:600">✅ ${done_ct} completed</span>
+            ${cur_step ? `<span style="color:var(--gold2);font-weight:600">🔶 ${cur_step.title}</span>` : ''}
+            <span style="color:var(--slate)">${total_ct - done_ct - (cur_step?1:0)} upcoming</span>
+            <span style="margin-left:auto;color:var(--slate)"><i class="fas fa-calendar-alt" style="margin-right:0.3rem"></i>Next: <strong style="color:var(--navy)">${c.next_date||'TBD'}</strong></span>
+          </div>
+        </div>`;
+    }
+    // ACTIVITY
+    var acts=[...tl.filter(t=>t.status==='done').slice(-3).reverse().map(t=>({c:'var(--green)',t:t.title,s:t.event_date})),...msgs.slice(0,2).map(m=>({c:'var(--navy)',t:'Message: '+m.sender,s:m.created_at}))];
+    document.getElementById('activity').innerHTML=acts.slice(0,4).map(a=>`<div style="display:flex;gap:0.8rem;align-items:flex-start;margin-bottom:0.9rem"><div style="width:8px;height:8px;border-radius:50%;background:${a.c};margin-top:0.4rem;flex-shrink:0"></div><div><strong style="color:var(--navy);font-size:0.87rem">${a.t}</strong><br><span style="color:var(--slate);font-size:0.78rem">${a.s}</span></div></div>`).join('')||'<p style="color:var(--slate);font-size:0.85rem">No recent activity.</p>';
+    // UPCOMING
+    var up=tl.filter(t=>t.status!=='done');
+    document.getElementById('upcoming').innerHTML=up.slice(0,3).map(u=>{var pts=u.event_date.split(' ');return`<div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem"><div style="text-align:center;background:${u.status==='current'?'var(--navy)':'var(--ivory)'};padding:0.5rem 0.8rem;border-radius:8px;min-width:50px"><div style="font-size:1.1rem;font-weight:700;color:${u.status==='current'?'var(--gold)':'var(--navy)'};line-height:1">${(pts[0]||'—').replace(',','')}</div><div style="font-size:0.65rem;color:${u.status==='current'?'rgba(255,255,255,0.6)':'var(--slate)'}">${pts[1]||''}</div></div><div><div style="font-weight:600;color:var(--navy);font-size:0.87rem">${u.title}</div><div style="font-size:0.78rem;color:var(--slate)">${u.description}</div></div></div>`;}).join('')||'<p style="color:var(--slate);font-size:0.85rem">No upcoming dates.</p>';
+    // CASE META
+    document.getElementById('cmeta').innerHTML=[['Case Reference',c.case_ref],['Case Type',c.case_type],['Lead Counsel',c.counsel],['Status',`<span class="badge b-pend">${c.status}</span>`],['Filed',c.filed_date||'—'],['Next Date',c.next_date||'—']].map(([l,v])=>`<div class="cmeta-item"><span>${l}</span><strong>${v}</strong></div>`).join('');
+    // PROGRESS TREE
+    var done_count = tl.filter(t=>t.status==='done').length;
+    var total_count = tl.length;
+    var pct = total_count > 0 ? Math.round((done_count / total_count) * 100) : 0;
+    var current_step = tl.find(t=>t.status==='current');
+
+    // Build progress header
+    var progressHTML = `
+      <div class="progress-header">
+        <div class="progress-label">
+          <span><i class="fas fa-tasks" style="color:var(--gold);margin-right:0.4rem"></i> Case Progress</span>
+          <span class="pct">${pct}% Complete</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.75rem;color:var(--slate)">
+          <span>✅ ${done_count} step${done_count!==1?'s':''} completed</span>
+          ${current_step ? `<span style="color:var(--gold2);font-weight:600">🔶 Now: ${current_step.title}</span>` : ''}
+          <span>${total_count - done_count - (current_step?1:0)} step${(total_count-done_count-(current_step?1:0))!==1?'s':''} remaining</span>
+        </div>
+      </div>`;
+
+    // Build step icons
+    var STEP_ICONS = {
+      'Case File Opened':        'fa-folder-open',
+      'Writ':                    'fa-file-alt',
+      'Hearing Date':            'fa-calendar-check',
+      'Hearing':                 'fa-gavel',
+      'Trial':                   'fa-balance-scale',
+      'Appeal':                  'fa-level-up-alt',
+      'Judgment':                'fa-stamp',
+      'Settlement':              'fa-handshake',
+      'Document':                'fa-file',
+      'Payment':                 'fa-money-bill',
+      'default':                 'fa-circle-notch',
+    };
+    function stepIcon(title) {
+      for (var key in STEP_ICONS) {
+        if (key !== 'default' && title.toLowerCase().includes(key.toLowerCase()))
+          return STEP_ICONS[key];
+      }
+      return STEP_ICONS['default'];
+    }
+
+    // Build each step
+    var stepsHTML = tl.map(function(t,i) {
+      var icon = t.status==='done' ? 'fa-check' : t.status==='current' ? 'fa-hourglass-half' : 'fa-circle';
+      var badge = t.status==='done' ? 'Completed' : t.status==='current' ? 'In Progress' : 'Upcoming';
+      return `<div class="tli tli-${t.status}">
+        <div class="tldot ${t.status}"><i class="fas ${icon}"></i></div>
+        <div class="tl-step-card ${t.status}">
+          <div class="tldate ${t.status}">${t.event_date}</div>
+          <div class="tltitle ${t.status}">
+            ${t.title}
+            <span class="tl-badge ${t.status}">${badge}</span>
+          </div>
+          ${t.description ? `<div class="tldesc">${t.description}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('timeline-progress').innerHTML = progressHTML;
+    document.getElementById('timeline').innerHTML = stepsHTML;
+    // DOCS
+    document.getElementById('doc-count').textContent=docs.length+' files in your secure folder';
+    document.getElementById('doclist').innerHTML=docs.map(d=>{var ic=d.file_type==='pdf'?'fa-file-pdf':'fa-file-word';var cl=d.file_type==='pdf'?'#e53e3e':'#2b5ce6';return`<div class="docitem"><i class="fas ${ic}" style="font-size:1.3rem;color:${cl};flex-shrink:0"></i><div><div style="font-weight:500;font-size:0.9rem;color:var(--navy)">${d.filename}</div><div style="font-size:0.75rem;color:var(--slate)">${d.file_size} · ${d.upload_date}</div></div><div style="margin-left:auto"><button class="btn btn-navy" style="padding:0.3rem 0.8rem;font-size:0.75rem" onclick="pToast('Viewing ${d.filename}...')"><i class="fas fa-eye"></i> View</button></div></div>`;}).join('')||'<p style="color:var(--slate);font-size:0.85rem">No documents uploaded yet.</p>';
+    // MESSAGES
+    document.getElementById('msglist').innerHTML=msgs.map(m=>`<div class="msgitem ${(!m.is_read&&m.sender_type==='firm')?'unread':''}"><span style="font-weight:600;font-size:0.88rem;color:var(--navy)">${m.sender}</span><span style="color:var(--slate);font-size:0.72rem;margin-left:0.5rem">${m.created_at}</span><div style="font-size:0.85rem;color:var(--slate);margin-top:0.4rem;line-height:1.6">${m.message}</div></div>`).join('')||'<p style="color:var(--slate);font-size:0.85rem">No messages yet.</p>';
+    // INVOICES
+    document.getElementById('invbody').innerHTML=invs.map(inv=>`<tr><td>${inv.invoice_ref}</td><td>${inv.description}</td><td>${inv.invoice_date}</td><td style="font-weight:600;color:var(--navy)">${inv.amount}</td><td><span class="badge ${inv.status==='Paid'?'b-paid':'b-due'}">${inv.status}</span></td></tr>`).join('');
+    document.getElementById('bank-info').innerHTML=`<i class="fas fa-university" style="color:var(--gold)"></i> <strong style="color:var(--navy)">Bank Transfer:</strong> ${bank.bank_name||'First Bank'} · Account: ${bank.account_name||'David Chambers'} · Ref: ${c.case_ref}`;
+  } catch(e){pToast('Could not load dashboard. Please refresh.');}
+}
+
+async function sendMsg() {
+  var txt=document.getElementById('compose-txt').value.trim();
+  if(!txt){pToast('Please type a message first.');return;}
+  try{var r=await fetch('/api/client/message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:TOKEN,message:txt})});
+    var d=await r.json();
+    if(d.ok){document.getElementById('compose-txt').value='';pToast('✅ Message sent to your legal team!');loadDash();}
+  }catch(e){pToast('Could not send. Please try again.');}
+}
+
+// Auto login if session exists
+if(TOKEN){document.getElementById('login-screen').style.display='none';document.getElementById('dashboard').style.display='block';document.getElementById('twelcome').textContent='Welcome, '+UNAME;loadDash();}
+document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('l-email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('l-pass').focus();});
+</script>
+</body>
+</html>
