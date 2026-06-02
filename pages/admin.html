@@ -148,7 +148,7 @@
       <button class="a-nav" onclick="aShow('inquiries',this)"><i class="fas fa-envelope"></i> Inquiries <span id="sb-i" style="background:var(--gold);color:var(--navy);border-radius:50%;width:18px;height:18px;display:none;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;margin-left:auto"></span></button>
       <div class="a-stitle">Settings</div>
       <button class="a-nav" id="nav-staff" onclick="aShow('staff',this)"><i class="fas fa-user-shield"></i> Staff Accounts</button>
-      <button class="a-nav" onclick="aShow('team',this)"><i class="fas fa-users"></i> Team Members</button>
+      <button class="a-nav" onclick="aShow('team',this)"><i class="fas fa-image"></i> Home Page Photo</button>
       <button class="a-nav" onclick="aShow('pricing',this)"><i class="fas fa-tags"></i> Pricing</button>
       <button class="a-nav" onclick="aShow('bank',this)"><i class="fas fa-university"></i> Bank Details</button>
       <button class="a-nav" onclick="aShow('logo',this)"><i class="fas fa-image"></i> Logo</button>
@@ -267,7 +267,15 @@
 
       <!-- STAFF ACCOUNTS -->
       <div id="ap-staff" class="a-panel">
-        <div class="ph"><h2>Staff Accounts</h2><p>Create logins for case managers and receptionists. Only Super Admin can manage staff accounts.</p></div>
+        <div class="ph"><h2>Staff Accounts</h2><p>Create logins for your team. Manage access levels for each staff member.</p></div>
+        <div class="a-card" style="border-left:4px solid var(--gold);margin-bottom:1.5rem">
+          <div class="ac-title"><i class="fas fa-key"></i> Reset Your Own Password</div>
+          <div class="f-row">
+            <div class="f-group"><label>New Password</label><input type="password" id="self-pwd" placeholder="Enter new password (min 8 chars)"></div>
+            <div class="f-group"><label>Confirm Password</label><input type="password" id="self-pwd2" placeholder="Confirm new password"></div>
+          </div>
+          <button class="btn btn-navy" onclick="resetMyPassword()"><i class="fas fa-key"></i> Reset My Password</button>
+        </div>
 
         <!-- Role explanation -->
         <div class="a-card">
@@ -318,17 +326,37 @@
 
       <!-- TEAM MEMBERS -->
       <div id="ap-team" class="a-panel">
-        <div class="ph"><h2>Team Members</h2><p>Manage lawyers shown on the About page</p></div>
-        <div class="a-card">
-          <div class="ac-title"><i class="fas fa-user-plus"></i> Add Team Member</div>
-          <div class="f-row"><div class="f-group"><label>Full Name *</label><input type="text" id="tm-name" placeholder="Barr. Full Name"></div><div class="f-group"><label>Role *</label><input type="text" id="tm-role" placeholder="e.g. Senior Associate"></div></div>
-          <div class="f-row"><div class="f-group"><label>Year Called to Bar *</label><input type="text" id="tm-bar" placeholder="e.g. 2018"></div><div class="f-group"><label>Photo (optional)</label><input type="file" id="tm-photo" accept="image/*"></div></div>
-          <div class="f-group"><label>Short Bio (optional)</label><textarea id="tm-bio" rows="2" style="width:100%;padding:0.8rem;border:1.5px solid rgba(13,27,62,0.12);border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;resize:vertical" placeholder="Brief professional background…"></textarea></div>
-          <button class="btn btn-primary" onclick="addTeam()"><i class="fas fa-plus"></i> Add Team Member</button>
+        <div class="ph">
+          <h2>Home Page — Featured Photo</h2>
+          <p>Update Barr. Love Chinyere Ebunoluwa — Founder &amp; Managing Partner.</p>
         </div>
-        <div class="a-card"><div class="ac-title"><i class="fas fa-users"></i> Current Team</div><div id="team-list"><p style="color:var(--slate)">Loading…</p></div></div>
-      </div>
 
+        <!-- Current photo preview -->
+        <div class="a-card">
+          <div class="ac-title"><i class="fas fa-image"></i> Current Home Page Photo</div>
+          <div style="display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap">
+            <div id="team-photo-preview" style="width:200px;height:260px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:center;flex-shrink:0;border:3px solid var(--gold)">
+              <span style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--gold)">LC</span>
+            </div>
+            <div>
+              <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--navy);margin-bottom:0.3rem">Barr. Love Chinyere Ebunoluwa</h3>
+              <p style="color:var(--gold2);font-weight:600;margin-bottom:0.5rem">Founder &amp; Managing Partner</p>
+              <p style="color:var(--slate);font-size:0.88rem;margin-bottom:1.5rem;line-height:1.7">This photo appears on the home page in the "Led by Experienced Nigerian Legal Practitioners" section. Upload a new photo below to update it immediately.</p>
+              <div class="f-group" style="margin-bottom:1rem">
+                <label>Select New Photo (JPG, PNG — portrait orientation recommended)</label>
+                <input type="file" id="featured-photo-input" accept="image/jpeg,image/png,image/jpg" onchange="previewFeaturedPhoto(this)">
+              </div>
+              <button class="btn btn-primary" onclick="uploadFeaturedPhoto()">
+                <i class="fas fa-upload"></i> Upload &amp; Update Home Page
+              </button>
+              <p style="margin-top:0.75rem;font-size:0.78rem;color:var(--slate)">
+                <i class="fas fa-info-circle"></i> After uploading, refresh the home page to see the new photo.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
       <!-- PRICING -->
       <div id="ap-pricing" class="a-panel">
         <div class="ph"><h2>Service Pricing</h2><p>Edit prices shown on the Services page. Changes reflect immediately.</p></div>
@@ -447,8 +475,8 @@ function applyRoleRestrictions() {
     });
   }
 
-  // Hide staff management for non-super-admin
-  if (ROLE !== 'super_admin') {
+  // Staff Accounts visible for rescavia_admin, firm_owner, super_admin only
+  if (!['rescavia_admin','firm_owner','super_admin'].includes(ROLE)) {
     var staffNav = document.getElementById('nav-staff');
     if (staffNav) staffNav.style.display = 'none';
   }
@@ -508,6 +536,7 @@ async function adminLogin() {
       sessionStorage.setItem('dc_admin', d.token);
       sessionStorage.setItem('dc_role',  d.role);
       sessionStorage.setItem('dc_aname', d.name);
+      sessionStorage.setItem('dc_email', document.getElementById('a-email').value.trim().toLowerCase());
       err.style.display = 'none';
       document.getElementById('a-login').style.display = 'none';
       document.getElementById('a-dash').style.display = 'flex';
@@ -781,37 +810,56 @@ async function loadInquiries() {
 }
 
 // ── TEAM ──────────────────────────────────────────────
-async function loadTeam() {
-  var team = await api('/api/admin/team?token='+TOKEN);
-  document.getElementById('team-list').innerHTML = team.length
-    ? `<table class="atbl"><thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Year Called</th><th></th></tr></thead><tbody>`
-      + team.map(m => `<tr><td><div style="width:38px;height:38px;border-radius:50%;background:var(--navy);overflow:hidden;display:flex;align-items:center;justify-content:center">${m.photo?`<img src="/${m.photo}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:`<span style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-weight:700;font-size:0.9rem">${m.name.split(' ').pop()[0]}</span>`}</div></td><td><strong style="color:var(--navy)">${m.name}</strong></td><td>${m.role}</td><td>${m.bar_year}</td><td><button class="abtn abtn-sm abtn-red" onclick="deleteTeam(${m.id})">Remove</button></td></tr>`).join('')
-      + `</tbody></table>` : '<p style="color:var(--slate)">No team members yet.</p>';
+async // ── TEAM / HOME PAGE PHOTO ───────────────────────────
+function loadTeam() {
+  // Load current photo for Barr. Love Chinyere (team id=2)
+  fetch('/api/public/team')
+    .then(function(r) { return r.ok ? r.json() : []; })
+    .then(function(team) {
+      var member = team.find(function(m) { return m.photo; }) || (team.length > 1 ? team[1] : team[0]);
+      if (!member) return;
+      var preview = document.getElementById('team-photo-preview');
+      if (!preview) return;
+      if (member.photo) {
+        preview.innerHTML = '<img src="/' + member.photo + '?v=' + Date.now()
+          + '" alt="' + member.name + '" style="width:100%;height:100%;object-fit:cover;object-position:center top">';
+      }
+    })
+    .catch(function() {});
 }
 
-async function addTeam() {
-  var name = document.getElementById('tm-name').value.trim();
-  var role = document.getElementById('tm-role').value.trim();
-  var bar  = document.getElementById('tm-bar').value.trim();
-  var bio  = document.getElementById('tm-bio').value.trim();
-  if (!name||!role||!bar) { aToast('Name, role and year required','err'); return; }
-  var d = await api('/api/admin/team?token='+TOKEN, { method:'POST', body:JSON.stringify({name,role,bar_year:bar,bio,sort_order:99}) });
-  if (d.ok) {
-    var pf = document.getElementById('tm-photo');
-    if (pf && pf.files[0]) {
-      var fd = new FormData(); fd.append('file', pf.files[0]);
-      await fetch('/api/admin/team/'+d.id+'/photo?token='+TOKEN, { method:'POST', body:fd });
+function previewFeaturedPhoto(input) {
+  if (!input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var preview = document.getElementById('team-photo-preview');
+    if (preview) preview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;object-position:center top">';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+async function uploadFeaturedPhoto() {
+  var input = document.getElementById('featured-photo-input');
+  if (!input || !input.files[0]) { aToast('Please select a photo first','err'); return; }
+  // Upload to team id=2 (Barr. Love Chinyere)
+  var fd = new FormData();
+  fd.append('file', input.files[0]);
+  aToast('Uploading photo...','ok');
+  try {
+    var r = await fetch('/api/admin/team/2/photo?token=' + TOKEN, { method: 'POST', body: fd });
+    var d = await r.json();
+    if (d.ok) {
+      aToast('✅ Home page photo updated! Refresh the home page to see it.', 'ok');
+      input.value = '';
+      loadTeam(); // refresh preview
+    } else {
+      aToast('Upload failed: ' + (d.detail || 'Unknown error'), 'err');
     }
-    aToast(`${name} added to team!`,'ok'); loadTeam();
-    ['tm-name','tm-role','tm-bar','tm-bio'].forEach(id => { var e=document.getElementById(id); if(e)e.value=''; });
+  } catch(e) {
+    aToast('Upload error: ' + e.message, 'err');
   }
 }
 
-async function deleteTeam(id) {
-  if (!confirm('Remove this team member?')) return;
-  await api('/api/admin/team/'+id+'?token='+TOKEN, {method:'DELETE'});
-  loadTeam(); aToast('Team member removed.','ok');
-}
 
 // ── PRICING ───────────────────────────────────────────
 async function loadPricing() {
@@ -938,6 +986,29 @@ async function uploadLogo() {
   if (d.ok) aToast('✅ Logo uploaded! All pages will show it after refresh.','ok');
   else aToast('Upload failed','err');
 }
+
+// ── RESET OWN PASSWORD ────────────────────────────────
+async function resetMyPassword() {
+  var pwd1 = document.getElementById('self-pwd').value;
+  var pwd2 = document.getElementById('self-pwd2').value;
+  if (!pwd1 || pwd1.length < 8) { aToast('Password must be at least 8 characters','err'); return; }
+  if (pwd1 !== pwd2) { aToast('Passwords do not match','err'); return; }
+  // Get current user's ID from staff list
+  var staff = await api('/api/admin/staff?token=' + TOKEN);
+  var me = staff.find(function(s) { return s.email === sessionStorage.getItem('dc_email'); });
+  if (!me) {
+    // Fallback: find by name
+    me = staff.find(function(s) { return s.name === ANAME; });
+  }
+  if (!me) { aToast('Could not identify your account. Contact RESCAIVA.','err'); return; }
+  var d = await api('/api/admin/staff/' + me.id + '/reset-password?token=' + TOKEN + '&new_password=' + encodeURIComponent(pwd1), {method:'POST'});
+  if (d.ok) {
+    aToast('✅ Password updated! Use your new password on next login.','ok');
+    document.getElementById('self-pwd').value = '';
+    document.getElementById('self-pwd2').value = '';
+  } else aToast(d.detail || 'Error resetting password','err');
+}
+
 </script>
 </body>
 </html>
