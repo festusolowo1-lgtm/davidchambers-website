@@ -132,12 +132,8 @@ def init_db():
     # Seed team
     c.execute("SELECT COUNT(*) FROM team")
     if c.fetchone()[0] == 0:
-        c.executemany("INSERT INTO team(name,role,bar_year,sort_order) VALUES(?,?,?,?)", [
-            ('Barr. David Chambers',        'Managing Partner',          '2010', 0),
-            ('Barr. Love Chinyere Ebunoluwa','Senior Associate',         '2015', 1),
-            ('Barr. [Name]',                'Associate – Corporate Law', '2018', 2),
-            ('Barr. [Name]',                'Associate – Family Law',    '2020', 3),
-        ])
+        c.execute("INSERT INTO team(name,role,bar_year,photo,sort_order) VALUES(?,?,?,?,?)",
+          ('Barr. Love Chinyere Ebunoluwa', 'Founder & Managing Partner', '2015', 'images/team/team_2.jpg', 0))
 
     # Seed pricing
     c.execute("SELECT COUNT(*) FROM pricing")
