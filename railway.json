@@ -1,4 +1,4 @@
-this is what is in railway.json: {
+{
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
